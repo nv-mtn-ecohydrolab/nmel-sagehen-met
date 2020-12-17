@@ -1,67 +1,119 @@
 library(tidyverse)
 library(lubridate)
+library(weathermetrics)
 
 # WRCC DATA ####
-setwd("/Volumes/My Passport/Sagehen/Sagehen Data")
-wrcc <- read.csv("WRCC_DRI_data.csv")
-head(wrcc)
-sapply(wrcc, class)
+setwd("/Volumes/My Passport/Sagehen/Data Paper 2.0/COOP")
+wrcc_s10 <- read.csv("WRCC_DRI_data.csv")
+head(wrcc_s10)
+sapply(wrcc_s10, class)
 
+# FORMAT DF #### 
 # DateTime
-colnames(wrcc)[1] <- "DateTime"
-wrcc$Year <- substr(wrcc$DateTime, 1, 2)
-wrcc$Month <- substr(wrcc$DateTime, 3, 4)
-wrcc$Day <- substr(wrcc$DateTime, 5, 6)
-wrcc$Hour <- substr(wrcc$DateTime, 7, 8)
-wrcc$Minute <- substr(wrcc$DateTime, 9, 10)
-wrcc$DateTime <- paste0("20", wrcc$Year, "-", wrcc$Month, "-", wrcc$Day, " ", wrcc$Hour, ":", wrcc$Minute)
-wrcc <- select(wrcc, -c("Year", "Month", "Day", "Hour", "Minute"))
-wrcc$DateTime <- ymd_hm(wrcc$DateTime)
-
+colnames(wrcc_s10)[1] <- "DateTime"
+wrcc_s10$Year <- substr(wrcc_s10$DateTime, 1, 2)
+wrcc_s10$Month <- substr(wrcc_s10$DateTime, 3, 4)
+wrcc_s10$Day <- substr(wrcc_s10$DateTime, 5, 6)
+wrcc_s10$Hour <- substr(wrcc_s10$DateTime, 7, 8)
+wrcc_s10$Minute <- substr(wrcc_s10$DateTime, 9, 10)
+wrcc_s10$DateTime <- paste0("20", wrcc_s10$Year, "-", wrcc_s10$Month, "-", wrcc_s10$Day, " ", wrcc_s10$Hour, ":", wrcc_s10$Minute)
+wrcc_s10 <- select(wrcc_s10, -c("Year", "Month", "Day", "Hour", "Minute", "Fuel_Temp", "Battery_Voltage"))
+wrcc_s10$DateTime <- ymd_hm(wrcc_s10$DateTime)
 # Precip 
-colnames(wrcc)[2] <- "Precip_in"
+colnames(wrcc_s10)[2] <- "Precip_mm"
+wrcc_s10$Precip_mm <- wrcc_s10$Precip_mm*25.4
 # Wind speed
-colnames(wrcc)[3] <- "Wind_Speed_mph"
+colnames(wrcc_s10)[3] <- "Wind_Speed_ms"
+wrcc_s10$Wind_Speed_ms <- wrcc_s10$Wind_Speed_ms*0.44704
 # Wind direction
-colnames(wrcc)[4] <- "Wind_Dir_deg"
+colnames(wrcc_s10)[4] <- "Wind_Dir_deg"
 # Air temp
-colnames(wrcc)[5] <- "Air_Temp_degC"
-# Fuel temp
-wrcc <- select(wrcc, -c("Fuel_Temp"))
+colnames(wrcc_s10)[5] <- "Air_Temp_degC" 
+wrcc_s10$Air_Temp_degC <- fahrenheit.to.celsius(wrcc_s10$Air_Temp_degC)
 # RH
-colnames(wrcc)[6] <- "Rel_Humidity_pct"
-# Battery
-colnames(wrcc)[7] <- "Battery_volts"
+colnames(wrcc_s10)[6] <- "Rel_Humidity_pct"
 # Dir Max Gust
-wrcc <- select(wrcc, -c("Dir_MxGust"))
+colnames(wrcc_s10)[7] <- "Dir_MxGust"
 # MxGust Speed
-colnames(wrcc)[8] <- "MxGust_Speed_mph"
+colnames(wrcc_s10)[8] <- "MxGust_Speed_mph"
 # Solar rad
-colnames(wrcc)[9] <- "Solar_Rad_w_m2"
-
+colnames(wrcc_s10)[9] <- "Solar_Rad_w_m2"
 # Replace all -9999 with NA
-wrcc$Precip_in[which(wrcc$Precip_in == "-9999")] <- NA 
-wrcc$Air_Temp_degC[which(wrcc$Air_Temp_degC == "-9999")] <- NA 
-wrcc$Rel_Humidity_pct[which(wrcc$Rel_Humidity_pct == "-9999")] <- NA 
-wrcc$Solar_Rad_w_m2[which(wrcc$Solar_Rad_w_m2 == "-9999")] <- NA 
+wrcc_s10$Precip_mm[which(wrcc_s10$Precip_mm == "-9999")] <- NA 
+wrcc_s10$Air_Temp_degC[which(wrcc_s10$Air_Temp_degC == "-9999")] <- NA 
+wrcc_s10$Rel_Humidity_pct[which(wrcc_s10$Rel_Humidity_pct == "-9999")] <- NA 
+wrcc_s10$Solar_Rad_w_m2[which(wrcc_s10$Solar_Rad_w_m2 == "-9999")] <- NA 
 
+# CREATE DAILY DF ####
+# Daily Averages
+wrcc_sd <- wrcc_s10 %>%
+  group_by(date(DateTime)) %>%
+  summarise_at(.vars = c("Air_Temp_degC"), .funs = c("mean" = mean))
 
-# Plots ####
-theme_set(theme(legend.position = "none",panel.background = element_blank(), 
-                axis.line = element_line(colour = "black")))
+# Daiy Increment (P)
+wrcc_sd_p <- wrcc_s10 %>%
+  group_by(date(DateTime)) %>%
+  summarise_at(.vars = c("Precip_mm"), .funs = c("sum" = sum))
+wrcc_sd$Precip_mm_sum <- wrcc_sd_p$sum
+rm(wrcc_sd_p)
 
-# Precip
-ggplot(wrcc, aes(DateTime, Precip_in))+
-  geom_line()
+# Daily Max/Min (T)
+wrcc_sd_t <- wrcc_s10 %>%
+  group_by(date(DateTime)) %>%
+  summarise_at(.vars = c("Air_Temp_degC"), .funs = c("min" = min, "max" = max))
+wrcc_sd$Air_Temp_degC_min <- wrcc_sd_t$min
+wrcc_sd$Air_Temp_degC_max <- wrcc_sd_t$max
+rm(wrcc_sd_t)
+colnames(wrcc_sd)[1] <- "Date"
 
-# Temp
-ggplot(wrcc, aes(DateTime, Air_Temp_degC))+
-  geom_line()
+# CREATE HOURLY DF ####
+wrcc_s10$DateTime2 <- substr(wrcc_s10$DateTime, 1, 13)
+wrcc_s10$DateTime2 <- paste0(wrcc_s10$DateTime2, ":00:00")
+# Hourly Averages
+wrcc_sh <- wrcc_s10 %>%
+  group_by(DateTime2) %>%
+  summarise_at(.vars = c("Wind_Speed_ms", "Wind_Dir_deg",
+                         "Air_Temp_degC", "Rel_Humidity_pct",
+                         "MxGust_Speed_mph", "Solar_Rad_w_m2"), .funs = c("mean" = mean))
 
-# RH
-ggplot(wrcc, aes(DateTime, Rel_Humidity_pct))+
-  geom_line()
+# Hourly Increment (P)
+wrcc_sh_p <- wrcc_s10 %>%
+  group_by(DateTime2) %>%
+  summarise_at(.vars = c("Precip_mm"), .funs = c("sum" = sum))
+wrcc_sh$Precip_mm_sum <- wrcc_sh_p$sum
+rm(wrcc_sh_p)
 
-# Solar rad
-ggplot(wrcc, aes(DateTime, Solar_Rad_w_m2))+
-  geom_line()
+# Hourly Max/Min (T)
+wrcc_sh_trh <- wrcc_s10 %>%
+  group_by(DateTime2) %>%
+  summarise_at(.vars = c("Air_Temp_degC", "Rel_Humidity_pct"), .funs = c("min" = min, "max" = max))
+wrcc_sh$Air_Temp_degC_min <- wrcc_sh_trh$Air_Temp_degC_min
+wrcc_sh$Air_Temp_degC_max <- wrcc_sh_trh$Air_Temp_degC_max
+wrcc_sh$Rel_Humidity_min <- wrcc_sh_trh$Rel_Humidity_pct_min
+wrcc_sh$Rel_Humidity_max <- wrcc_sh_trh$Rel_Humidity_pct_max
+rm(wrcc_sh_trh)
+colnames(wrcc_sh)[1] <- "Date"
+
+# COMPARE to ROSE ####
+setwd("/Volumes/My Passport/Sagehen/Data Paper Download")
+wrcc_sh_R <- read.csv("dfwrcc_hourly_lvl1.csv")
+
+# # Plots #
+# theme_set(theme(legend.position = "none",panel.background = element_blank(), 
+#                 axis.line = element_line(colour = "black")))
+# 
+# # Precip
+# ggplot(wrcc_sh, aes(DateTime, Precip_mm))+
+#   geom_line()
+# 
+# # Temp
+# ggplot(wrcc_sh, aes(DateTime, Air_Temp_degC))+
+#   geom_line()
+# 
+# # RH
+# ggplot(wrcc_sh, aes(DateTime, Rel_Humidity_pct))+
+#   geom_line()
+# 
+# # Solar rad
+# ggplot(wrcc_sh, aes(DateTime, Solar_Rad_w_m2))+
+#   geom_line()
