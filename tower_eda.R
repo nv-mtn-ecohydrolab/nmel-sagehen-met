@@ -1,6 +1,7 @@
 # SH TOWER DATA ####
 library(tidyverse)
 library(lubridate)
+library(gridExtra)
 
 # TOWER 1 ####
 # avgtemp_C_t1_25ft: hourly avg. temperature (deg C) 25 ft
@@ -376,8 +377,138 @@ rm(T4, T4_2, T4_3, cols.num, dup)
 ggplot()+
   geom_line(dat = T4_final, mapping = aes(x = TIMESTAMP, y = AirTC_25ft_Avg))
 
-# Save data frames ####
+# HOURLY/DAILY DATA ####
+## Tower 1 :
+T1_final$Date <- date(T1_final$TIMESTAMP)
+T1_final$DateTime <- paste(substr(T1_final$TIMESTAMP,1, 13), ":00:00", sep = "")
+names(T1_final)
+T1_hourly_1 <- T1_final %>%
+  group_by(DateTime) %>%
+  summarise_at(.vars = c("AirTC_25ft_Avg", "AirTC_100ft_Avg", "RH_25ft", "RH_100ft",
+                         "WS_ms_25ft", "WS_ms_100ft", "srad_Wm2", "BP_mbar_Avg"), .funs = c("mean" = mean))
+T1_hourly_2 <- T1_final %>%
+  group_by(DateTime) %>%
+  summarise_at(.vars = c("WS_ms_25ft_Max", "WS_ms_100ft_Max"), .funs = c("max" = max))
+T1_hourly <- merge(T1_hourly_1, T1_hourly_2)
+T1_hourly$DateTime <- ymd_hms(T1_hourly$DateTime)
+rm(T1_hourly_1, T1_hourly_2)
+
+T1_daily_1 <- T1_final %>%
+  group_by(Date) %>%
+  summarise_at(.vars = c("AirTC_25ft_Avg", "AirTC_100ft_Avg", "RH_25ft", "RH_100ft",
+                         "WS_ms_25ft", "WS_ms_100ft", "srad_Wm2", "BP_mbar_Avg"), .funs = c("mean" = mean))
+T1_daily_2 <- T1_final %>%
+  group_by(Date) %>%
+  summarise_at(.vars = c("WS_ms_25ft_Max", "WS_ms_100ft_Max"), .funs = c("max" = max))
+T1_daily <- merge(T1_daily_1, T1_daily_2)
+rm(T1_daily_2, T1_daily_1)
+
+## Tower 3:
+T3_final$Date <- date(T3_final$TIMESTAMP)
+T3_final$DateTime <- paste(substr(T3_final$TIMESTAMP,1, 13), ":00:00", sep = "")
+names(T3_final)
+T3_hourly_1 <- T3_final %>%
+  group_by(DateTime) %>%
+  summarise_at(.vars = c("AirTC_25ft_Avg",  "AirTC_100ft_Avg", "RH_25ft", 
+                         "RH_100ft", "WS_ms_25ft", "WS_ms_100ft", "srad_Wm2",
+                         "BP_mbar_Avg"), .funs = c("mean" = mean))
+T3_hourly_2 <-  T3_final %>%
+  group_by(DateTime) %>%
+  summarise_at(.vars = c("AirTC_25ft_Max", "AirTC_100ft_Max", "RH_25ft_Max", 
+                         "RH_100ft_Max", "WS_ms_25ft_Max", "WS_ms_100ft_Max"),
+               .funs = c("max" = max))
+T3_hourly_3 <- T3_final %>% 
+  group_by(DateTime) %>%
+  summarise_at(.vars = c("AirTC_25ft_Min", "AirTC_100ft_Min", "RH_25ft_Min",
+                         "RH_100ft_Min"), .funs = c("min" = min))
+T3_hourly <- merge(T3_hourly_1, T3_hourly_2)
+T3_hourly <- merge(T3_hourly, T3_hourly_3)
+rm(T3_hourly_1, T3_hourly_2, T3_hourly_3)
+names(T3_final)
+T3_daily_1 <- T3_final %>%
+  group_by(Date) %>%
+  summarise_at(.vars = c("AirTC_25ft_Avg",  "AirTC_100ft_Avg", "RH_25ft", 
+               "RH_100ft", "WS_ms_25ft", "WS_ms_100ft", "srad_Wm2",
+               "BP_mbar_Avg"), .funs = c("mean" = mean)) 
+T3_daily_2 <- T3_final %>%
+  group_by(Date) %>%
+  summarise_at(.vars = c("AirTC_25ft_Max", "AirTC_100ft_Max", "RH_25ft_Max", 
+                         "RH_100ft_Max", "WS_ms_25ft_Max", "WS_ms_100ft_Max"),
+               .funs = c("max" = max))
+T3_daily_3 <- T3_final %>%
+  group_by(Date) %>%
+  summarise_at(.vars = c("AirTC_25ft_Min", "AirTC_100ft_Min", "RH_25ft_Min",
+                         "RH_100ft_Min"), .funs = c("min" = min))
+T3_daily <- merge(T3_daily_1, T3_daily_2)
+T3_daily <- merge(T3_daily, T3_daily_3)
+rm(T3_daily_1, T3_daily_2, T3_daily_3)
+
+## Tower 4:
+T4_final$Date <- date(T4_final$TIMESTAMP)
+T4_final$DateTime <- paste(substr(T4_final$TIMESTAMP,1, 13), ":00:00", sep = "")
+names(T4_final)
+T4_hourly_1 <- T4_final %>%
+  group_by(DateTime) %>%
+  summarise_at(.vars = c("AirTC_25ft_Avg", "AirTC_100ft_Avg", "RH_25ft", 
+                         "RH_100ft", "WS_ms_25ft", "WS_ms_100ft", "srad_Wm2",
+                         "BP_mbar_Avg"), .funs = c("mean" = mean))
+T4_hourly_2 <- T4_final %>%
+  group_by(DateTime) %>%
+  summarise_at(.vars = c("AirTC_25ft_Max", "RH_25ft_Max", "WS_ms_25ft_Max",
+                         "WS_ms_100ft_Max"), .funs = c("max" = max))
+T4_hourly_3 <- T4_final %>%
+  group_by(DateTime) %>%
+  summarise_at(.vars = c("AirTC_25ft_Min", "RH_25ft_Min"), .funs = c("min" = min))
+T4_hourly <- merge(T4_hourly_1, T4_hourly_2)
+T4_hourly <- merge(T4_hourly, T4_hourly_3)
+rm(T4_hourly_1, T4_hourly_2, T4_hourly_3)
+T4_daily_1 <-  T4_final %>%
+  group_by(Date) %>%
+  summarise_at(.vars = c("AirTC_25ft_Avg", "AirTC_100ft_Avg", "RH_25ft", 
+                         "RH_100ft", "WS_ms_25ft", "WS_ms_100ft", "srad_Wm2",
+                         "BP_mbar_Avg"), .funs = c("mean" = mean))
+T4_daily_2 <- T4_final %>%
+  group_by(Date) %>%
+  summarise_at(.vars = c("AirTC_25ft_Max", "RH_25ft_Max", "WS_ms_25ft_Max",
+                         "WS_ms_100ft_Max"), .funs = c("max" = max))
+T4_daily_3 <- T4_final %>%
+  group_by(Date) %>%
+  summarise_at(.vars = c("AirTC_25ft_Min", "RH_25ft_Min"), .funs = c("min" = min))
+T4_daily <- merge(T4_daily_1, T4_daily_2)
+T4_daily <- merge(T4_daily, T4_daily_3)
+rm(T4_daily_1, T4_daily_2, T4_daily_3)
+
+
+# Save data frames
 setwd("/Volumes/My Passport/Sagehen/nmel-sagehen-met/Data")
 saveRDS(T1_final, "T1_lvl0.rds")
 saveRDS(T3_final, "T3_lvl0.rds")
 saveRDS(T4_final, "T4_lvl0.rds")
+
+saveRDS(T1_hourly, "T1_hourly_lvl0.rds")
+saveRDS(T3_hourly, "T3_hourly_lvl0.rds")
+saveRDS(T4_hourly, "T4_hourly_lvl0.rds")
+
+saveRDS(T1_daily, "T1_daily_lvl0.rds")
+saveRDS(T3_daily, "T3_daily_lvl0.rds")
+saveRDS(T4_daily, "T4_daily_lvl0.rds")
+
+rm(T1_final, T3_final, T4_final)
+
+# Compare to Rose ####
+setwd("/Volumes/My Passport/Sagehen/Data Paper Download")
+R1 <- read.csv("tower1_lvl1.csv")
+sapply(R1, class)
+R1$Date <- mdy_hm(R1$Date)
+names(R1)
+names(T1_hourly)
+
+p <- ggplot()+
+  geom_line(R1, mapping = aes( Date, avgtemp_C_t1_25ft))+
+  xlim(as.POSIXct("2009-01-02 13:00:00"), as.POSIXct("2020-12-17 07:00:00"))
+p1 <- ggplot()+
+  geom_line(T1_hourly, mapping = aes(DateTime, AirTC_25ft_Avg_mean))+
+  xlim(as.POSIXct("2009-01-02 13:00:00"), as.POSIXct("2020-12-17 07:00:00"))
+
+grid.arrange(p, p1, ncol=1)
+
