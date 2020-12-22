@@ -1,10 +1,37 @@
 library(tidyverse)
 library(lubridate)
 library(weathermetrics)
+library(readxl)
 
 # WRCC DATA ####
 setwd("/Volumes/My Passport/Sagehen/Data Paper 2.0/COOP")
-wrcc_s10 <- read.csv("WRCC_DRI_data.csv")
+wrcc_1 <- read.table("WRCC_data_1.xls", skip = 3, header = TRUE, row.names = NULL)
+wrcc_2 <- read.table("WRCC_data_2.xls", skip = 3, header = TRUE, row.names = NULL)
+wrcc_3 <- read.table("WRCC_data_3.xls", skip = 3, header = TRUE, row.names = NULL)
+wrcc_4 <- read.table("WRCC_data_4.xls", skip = 3, header = TRUE, row.names = NULL)
+wrcc_5 <- read.table("WRCC_data_5.xls", skip = 3, header = TRUE, row.names = NULL)
+
+head(wrcc_1)
+col.names <- c("DateTime", "WS_ms", "AirTC_avg", "AirTC_max", "AirTC_min",
+                      "RH_pct", "RH_max", "RH_min", "BP_mbar", "Srad_Wm2", 
+                      "Precip_mm", "Precip_accum", "SnowDepth_mm")
+
+colnames(wrcc_1) <- col.names
+colnames(wrcc_2) <- col.names
+colnames(wrcc_3) <- col.names
+colnames(wrcc_4) <- col.names
+colnames(wrcc_5) <- col.names
+rm(col.names)
+
+wrcc_s <- bind_rows(wrcc_1, wrcc_2, wrcc_3, wrcc_4, wrcc_5)
+rm(wrcc_1, wrcc_2, wrcc_3, wrcc_4, wrcc_5)
+head(wrcc_s)
+wrcc_s$Year <- substr(wrcc_s$DateTime, 1, 2)
+wrcc_s$Month <- substr(wrcc_s$DateTime, 3,4)
+wrcc_s$Day <- substr(wrcc_s$DateTime, 5, 6)
+wrcc_s$Hour <- substr(wrcc_s$DateTime, 7, 8)
+wrcc_s$Minute <- substr(wrcc_s$DateTime, 9, 10)
+
 head(wrcc_s10)
 sapply(wrcc_s10, class)
 
