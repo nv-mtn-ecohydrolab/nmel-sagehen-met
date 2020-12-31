@@ -1,4 +1,8 @@
+############# Lauren Bolotin - bolotinljb@gmail.com ##################
+
 # SH TOWER DATA ####
+# Read in raw data, format and remove unreasonable values following Petersky & Harpold 2018
+
 library(tidyverse)
 library(lubridate)
 library(gridExtra)
@@ -495,20 +499,4 @@ saveRDS(T4_daily, "T4_daily_lvl0.rds")
 
 rm(T1_final, T3_final, T4_final)
 
-# Compare to Rose ####
-setwd("/Volumes/My Passport/Sagehen/Data Paper Download")
-R1 <- read.csv("tower1_lvl1.csv")
-sapply(R1, class)
-R1$Date <- mdy_hm(R1$Date)
-names(R1)
-names(T1_hourly)
-
-p <- ggplot()+
-  geom_line(R1, mapping = aes( Date, avgtemp_C_t1_25ft))+
-  xlim(as.POSIXct("2009-01-02 13:00:00"), as.POSIXct("2020-12-17 07:00:00"))
-p1 <- ggplot()+
-  geom_line(T1_hourly, mapping = aes(DateTime, AirTC_25ft_Avg_mean))+
-  xlim(as.POSIXct("2009-01-02 13:00:00"), as.POSIXct("2020-12-17 07:00:00"))
-
-grid.arrange(p, p1, ncol=1)
 
