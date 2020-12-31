@@ -168,7 +168,11 @@ comp$diff <- comp$BP_mbar_Avg_mean-comp$BP_mbar_t1
 # comp$diff <- near(comp$BP_mbar_Avg_mean, comp$BP_mbar_t1)
 # Now all diff values say TRUE, so they are all the same
 
-
-
 ggplot()+
   geom_point(data = comp, mapping = aes(x = DateTime, y = diff))
+
+ggplot(data = comp)+
+  geom_point(mapping = aes(x = DateTime, y = BP_mbar_t1),color = "red", size = 0.25)+
+  geom_point(mapping = aes(x = DateTime, y = BP_mbar_Avg_mean), color = "blue", size = 0.25)
+# this shows that the values are the same (aside from where I have data that Rose didn't)
+# I am choosing not to worry about this because I really think our data is the same
