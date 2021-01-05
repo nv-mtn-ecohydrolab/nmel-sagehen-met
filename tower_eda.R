@@ -129,6 +129,12 @@ T1_final$WS_ms_100ft[which(T1_final$WS_ms_100ft > 25)] <- NA
 T1_final$srad_Wm2[which(T1_final$srad_Wm2 < 0)] <- NA
 T1_final$srad_Wm2[which(T1_final$srad_Wm2 > 2500)] <- NA
 T1_final$BP_mbar_Avg[which(T1_final$BP_mbar_Avg < 800)] <- NA
+T1_final$RH_25ft[which(T1_final$RH_25ft <0 )] <- NA
+T1_final$RH_25ft[which(T1_final$RH_25ft > 100 )] <- NA
+T1_final$RH_100ft[which(T1_final$RH_100ft <0 )] <- NA
+T1_final$RH_100ft[which(T1_final$RH_100ft > 100 )] <- NA
+# Note from metadata: Temperature measurements were logged as daily/hourly averages; precipitation, snow depth, and snow water equivalent were logged with their end-of-day amounts
+
 
 summary(T1_final$AirTC_25ft_Avg)
 summary(T1_final$AirTC_100ft_Avg)
