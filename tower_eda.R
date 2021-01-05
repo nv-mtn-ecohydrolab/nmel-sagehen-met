@@ -421,6 +421,8 @@ saveRDS(T4_final, "T4_lvl0.rds")
 
 # HOURLY/DAILY DATA ####
 ## Tower 1 :
+setwd("/Volumes/My Passport/Sagehen/nmel-sagehen-met/Data")
+T1_final <- readRDS("T1_lvl0.rds")
 names(T1_final)
 T1_hourly_1 <- T1_final %>%
   group_by(DateTime) %>%
@@ -428,10 +430,15 @@ T1_hourly_1 <- T1_final %>%
                          "WS_ms_25ft", "WS_ms_100ft", "srad_Wm2", "BP_mbar_Avg"), .funs = c("mean" = mean))
 T1_hourly_2 <- T1_final %>%
   group_by(DateTime) %>%
-  summarise_at(.vars = c("WS_ms_25ft_Max", "WS_ms_100ft_Max"), .funs = c("max" = max))
+  summarise_at(.vars = c("WS_ms_25ft", "WS_ms_100ft"), .funs = c("max" = max))
+
 T1_hourly <- merge(T1_hourly_1, T1_hourly_2)
 T1_hourly$DateTime <- ymd_hms(T1_hourly$DateTime)
 rm(T1_hourly_1, T1_hourly_2)
+setwd("/Volumes/My Passport/Sagehen/nmel-sagehen-met/Data")
+# saveRDS(T1_hourly, "T1_hourly_lvl0.rds")
+saveRDS(T1_hourly, "T1_hourly_lvl0_2.0.rds")
+
 
 T1_daily_1 <- T1_final %>%
   group_by(Date) %>%
@@ -517,8 +524,6 @@ rm(T4_daily_1, T4_daily_2, T4_daily_3)
 
 # Save data frames
 setwd("/Volumes/My Passport/Sagehen/nmel-sagehen-met/Data")
-
-saveRDS(T1_hourly, "T1_hourly_lvl0.rds")
 saveRDS(T3_hourly, "T3_hourly_lvl0.rds")
 saveRDS(T4_hourly, "T4_hourly_lvl0.rds")
 
