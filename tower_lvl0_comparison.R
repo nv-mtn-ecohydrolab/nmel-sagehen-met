@@ -7,6 +7,7 @@ library(gridExtra)
 # Bring in our level 0 tower data
 setwd("/Volumes/My Passport/Sagehen/nmel-sagehen-met/Data")
 T1_hourly <- readRDS("T1_hourly_lvl0.rds")
+# T1_hourly <- readRDS("T1_hourly_lvl0_2.0.rds")
 T3_hourly <- readRDS("T3_hourly_lvl0.rds")
 T4_hourly <- readRDS("T4_hourly_lvl0.rds")
 
