@@ -145,6 +145,11 @@ summary(T1_final$WS_ms_100ft)
 summary(T1_final$srad_Wm2) # Still confused by these units....something isn't right
 summary(T1_final$BP_mbar_Avg)
 
+T1_final$Date <- date(T1_final$TIMESTAMP)
+T1_final$DateTime <- paste(substr(T1_final$TIMESTAMP,1, 13), ":00:00", sep = "")
+setwd("/Volumes/My Passport/Sagehen/nmel-sagehen-met/Data")
+saveRDS(T1_final, "T1_lvl0.rds")
+
 # TOWER 3 ####
 # avgtemp_C_t3_25ft: hourly avg. temperature (deg C) 25 ft
 # avgtemp_C_t3_100ft: hourly avg. temperature (deg C) 100 ft
@@ -258,6 +263,16 @@ T3_final$WS_ms_100ft[which(T3_final$WS_ms_100ft > 25)] <- NA
 T3_final$srad_Wm2[which(T3_final$srad_Wm2 < 0)] <- NA
 T3_final$srad_Wm2[which(T3_final$srad_Wm2 > 2500)] <- NA
 T3_final$BP_mbar_Avg[which(T3_final$BP_mbar_Avg < 800)] <- NA
+T3_final$RH_25ft_Max[which(T3_final$RH_25ft_Max < 0)] <- NA
+T3_final$RH_25ft_Max[which(T3_final$RH_25ft_Max > 100)] <- NA
+T3_final$RH_100ft_Max[which(T3_final$RH_100ft_Max < 0)] <- NA
+T3_final$RH_100ft_Max[which(T3_final$RH_100ft_Max > 100)] <- NA
+T3_final$RH_25ft_Min[which(T3_final$RH_25ft_Min < 0)] <- NA
+T3_final$RH_25ft_Min[which(T3_final$RH_25ft_Min > 100)] <- NA
+T3_final$RH_100ft_Min[which(T3_final$RH_100ft_Min < 0)] <- NA
+T3_final$RH_100ft_Min[which(T3_final$RH_100ft_Min > 100)] <- NA
+T3_final$RH_25ft[which(T3_final$RH_25ft < 0)] <- NA
+T3_final$RH_100ft[which(T3_final$RH_100ft > 100)] <- NA
 
 summary(T3_final$AirTC_25ft_Avg)
 summary(T3_final$AirTC_100ft_Avg)
@@ -272,6 +287,11 @@ ggplot()+
   geom_line(dat = T3_final, mapping = aes(x = TIMESTAMP, y = AirTC_25ft_Avg))
 
 rm(T3, T3_2, T3_3, dup, cols.num)
+
+T3_final$Date <- date(T3_final$TIMESTAMP)
+T3_final$DateTime <- paste(substr(T3_final$TIMESTAMP,1, 13), ":00:00", sep = "")
+setwd("/Volumes/My Passport/Sagehen/nmel-sagehen-met/Data")
+saveRDS(T3_final, "T3_lvl0.rds")
 
 # TOWER 4 ####
 # avgtemp_C_t4_25ft: hourly avg. temperature (deg C) 25 ft
@@ -372,6 +392,12 @@ T4_final$WS_ms_100ft[which(T4_final$WS_ms_100ft > 25)] <- NA
 T4_final$srad_Wm2[which(T4_final$srad_Wm2 < 0)] <- NA
 T4_final$srad_Wm2[which(T4_final$srad_Wm2 > 2500)] <- NA
 T4_final$BP_mbar_Avg[which(T4_final$BP_mbar_Avg < 800)] <- NA
+T4_final$RH_25ft_Max[which(T4_final$RH_25ft_Max < 0)] <- NA
+T4_final$RH_25ft_Max[which(T4_final$RH_25ft_Max > 100)] <- NA
+T4_final$RH_25ft_Min[which(T4_final$RH_25ft_Min < 0)] <- NA
+T4_final$RH_25ft_Min[which(T4_final$RH_25ft_Min > 100)] <- NA
+T4_final$RH_25ft[which(T4_final$RH_25ft < 0)] <- NA
+T4_final$RH_100ft[which(T4_final$RH_100ft > 100)] <- NA
 
 summary(T4_final$AirTC_25ft_Avg)
 summary(T4_final$AirTC_100ft_Avg)
@@ -387,10 +413,14 @@ rm(T4, T4_2, T4_3, cols.num, dup)
 ggplot()+
   geom_line(dat = T4_final, mapping = aes(x = TIMESTAMP, y = AirTC_25ft_Avg))
 
+T4_final$Date <- date(T4_final$TIMESTAMP)
+T4_final$DateTime <- paste(substr(T4_final$TIMESTAMP,1, 13), ":00:00", sep = "")
+
+setwd("/Volumes/My Passport/Sagehen/nmel-sagehen-met/Data")
+saveRDS(T4_final, "T4_lvl0.rds")
+
 # HOURLY/DAILY DATA ####
 ## Tower 1 :
-T1_final$Date <- date(T1_final$TIMESTAMP)
-T1_final$DateTime <- paste(substr(T1_final$TIMESTAMP,1, 13), ":00:00", sep = "")
 names(T1_final)
 T1_hourly_1 <- T1_final %>%
   group_by(DateTime) %>%
@@ -414,8 +444,6 @@ T1_daily <- merge(T1_daily_1, T1_daily_2)
 rm(T1_daily_2, T1_daily_1)
 
 ## Tower 3:
-T3_final$Date <- date(T3_final$TIMESTAMP)
-T3_final$DateTime <- paste(substr(T3_final$TIMESTAMP,1, 13), ":00:00", sep = "")
 names(T3_final)
 T3_hourly_1 <- T3_final %>%
   group_by(DateTime) %>%
@@ -454,8 +482,6 @@ T3_daily <- merge(T3_daily, T3_daily_3)
 rm(T3_daily_1, T3_daily_2, T3_daily_3)
 
 ## Tower 4:
-T4_final$Date <- date(T4_final$TIMESTAMP)
-T4_final$DateTime <- paste(substr(T4_final$TIMESTAMP,1, 13), ":00:00", sep = "")
 names(T4_final)
 T4_hourly_1 <- T4_final %>%
   group_by(DateTime) %>%
@@ -491,9 +517,6 @@ rm(T4_daily_1, T4_daily_2, T4_daily_3)
 
 # Save data frames
 setwd("/Volumes/My Passport/Sagehen/nmel-sagehen-met/Data")
-saveRDS(T1_final, "T1_lvl0.rds")
-saveRDS(T3_final, "T3_lvl0.rds")
-saveRDS(T4_final, "T4_lvl0.rds")
 
 saveRDS(T1_hourly, "T1_hourly_lvl0.rds")
 saveRDS(T3_hourly, "T3_hourly_lvl0.rds")
