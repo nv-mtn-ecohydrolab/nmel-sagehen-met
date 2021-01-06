@@ -126,8 +126,11 @@ T1_final$WS_ms_25ft[which(T1_final$WS_ms_25ft < 0)] <- NA
 T1_final$WS_ms_100ft[which(T1_final$WS_ms_100ft < 0)] <- NA
 T1_final$WS_ms_25ft[which(T1_final$WS_ms_25ft > 25)] <- NA
 T1_final$WS_ms_100ft[which(T1_final$WS_ms_100ft > 25)] <- NA
+
+T1_final$srad_Wm2 <- T1_final$srad_Wm2 * 1000
 T1_final$srad_Wm2[which(T1_final$srad_Wm2 < 0)] <- NA
 T1_final$srad_Wm2[which(T1_final$srad_Wm2 > 2500)] <- NA
+
 T1_final$BP_mbar_Avg[which(T1_final$BP_mbar_Avg < 800)] <- NA
 T1_final$RH_25ft[which(T1_final$RH_25ft <0 )] <- NA
 T1_final$RH_25ft[which(T1_final$RH_25ft > 100 )] <- NA
@@ -260,8 +263,11 @@ T3_final$WS_ms_25ft[which(T3_final$WS_ms_25ft < 0)] <- NA
 T3_final$WS_ms_100ft[which(T3_final$WS_ms_100ft < 0)] <- NA
 T3_final$WS_ms_25ft[which(T3_final$WS_ms_25ft > 25)] <- NA
 T3_final$WS_ms_100ft[which(T3_final$WS_ms_100ft > 25)] <- NA
+
+T3_final$srad_Wm2 <- T3_final$srad_Wm2 * 1000
 T3_final$srad_Wm2[which(T3_final$srad_Wm2 < 0)] <- NA
 T3_final$srad_Wm2[which(T3_final$srad_Wm2 > 2500)] <- NA
+
 T3_final$BP_mbar_Avg[which(T3_final$BP_mbar_Avg < 800)] <- NA
 T3_final$RH_25ft_Max[which(T3_final$RH_25ft_Max < 0)] <- NA
 T3_final$RH_25ft_Max[which(T3_final$RH_25ft_Max > 100)] <- NA
@@ -389,6 +395,8 @@ T4_final$WS_ms_25ft[which(T4_final$WS_ms_25ft < 0)] <- NA
 T4_final$WS_ms_100ft[which(T4_final$WS_ms_100ft < 0)] <- NA
 T4_final$WS_ms_25ft[which(T4_final$WS_ms_25ft > 25)] <- NA
 T4_final$WS_ms_100ft[which(T4_final$WS_ms_100ft > 25)] <- NA
+
+T4_final$srad_Wm2 <- T4_final$srad_Wm2 * 1000
 T4_final$srad_Wm2[which(T4_final$srad_Wm2 < 0)] <- NA
 T4_final$srad_Wm2[which(T4_final$srad_Wm2 > 2500)] <- NA
 T4_final$BP_mbar_Avg[which(T4_final$BP_mbar_Avg < 800)] <- NA
@@ -436,7 +444,7 @@ T1_hourly <- merge(T1_hourly_1, T1_hourly_2)
 T1_hourly$DateTime <- ymd_hms(T1_hourly$DateTime)
 rm(T1_hourly_1, T1_hourly_2)
 setwd("/Volumes/My Passport/Sagehen/nmel-sagehen-met/Data")
-# saveRDS(T1_hourly, "T1_hourly_lvl0.rds")
+saveRDS(T1_hourly, "T1_hourly_lvl0.rds")
 saveRDS(T1_hourly, "T1_hourly_lvl0_2.0.rds")
 
 
