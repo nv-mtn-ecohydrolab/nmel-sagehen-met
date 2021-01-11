@@ -7,11 +7,12 @@ library(gridExtra)
 # Bring in our level 0 tower data
 setwd("/Volumes/My Passport/Sagehen/nmel-sagehen-met/Data")
 T1_hourly <- readRDS("T1_hourly_lvl0.rds")
-# T1_hourly <- readRDS("T1_hourly_lvl0_2.0.rds")
+T1_hourly_2.0 <- readRDS("T1_hourly_lvl0_2.0.rds")
 T3_hourly <- readRDS("T3_hourly_lvl0.rds")
 T4_hourly <- readRDS("T4_hourly_lvl0.rds")
 
 T1_hourly$DateTime <- ymd_hms(T1_hourly$DateTime)
+T1_hourly_2.0$DateTime <- ymd_hms(T1_hourly$DateTime)
 T3_hourly$DateTime <- ymd_hms(T3_hourly$DateTime)
 T4_hourly$DateTime <- ymd_hms(T4_hourly$DateTime)
 
@@ -114,6 +115,9 @@ ggplot()+
 # I suspect that Rose calculated the maximum each hour of the ten minute data herself rather than
 # using the column that actually say's it captures max wind speed. I will need to go back
 # to the tower_eda.R script and change this and see if it helps
+
+# There aren't as many large differences using the regular wind speed data to calculate the max
+
 
 # Wind Speed 100 ft 
 comp1 <- select(T1_hourly, c(1,7))
@@ -361,7 +365,7 @@ comp$diff <- round(comp$diff, digits = 8)
 
 ggplot()+
   geom_point(data = comp, mapping = aes(x = DateTime, y = diff))
-# Same critiue as other mins and maxs
+# Same critique as other mins and maxs
 
 # Wind Speed 100 ft
 comp1 <- select(T3_hourly, c(1,7))

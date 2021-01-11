@@ -138,7 +138,6 @@ T1_final$RH_100ft[which(T1_final$RH_100ft <0 )] <- NA
 T1_final$RH_100ft[which(T1_final$RH_100ft > 100 )] <- NA
 # Note from metadata: Temperature measurements were logged as daily/hourly averages; precipitation, snow depth, and snow water equivalent were logged with their end-of-day amounts
 
-
 summary(T1_final$AirTC_25ft_Avg)
 summary(T1_final$AirTC_100ft_Avg)
 summary(T1_final$RH_25ft)
@@ -253,12 +252,39 @@ dup <- T3_final[duplicated(T3_final$TIMESTAMP),]
 
 ggplot()+
   geom_line(dat = T3_final, mapping = aes(x = TIMESTAMP, y = AirTC_25ft_Avg))
+ggplot()+
+  geom_line(dat = T3_final, mapping = aes(x = TIMESTAMP, y = AirTC_25ft_Max))
+ggplot()+
+  geom_line(dat = T3_final, mapping = aes(x = TIMESTAMP, y = AirTC_25ft_Min))
+ggplot()+
+  geom_line(dat = T3_final, mapping = aes(x = TIMESTAMP, y = AirTC_100ft_Avg))
+ggplot()+
+  geom_line(dat = T3_final, mapping = aes(x = TIMESTAMP, y = AirTC_100ft_Max))
+ggplot()+
+  geom_line(dat = T3_final, mapping = aes(x = TIMESTAMP, y = AirTC_100ft_Min))+
+  xlim(as.POSIXct("2010-01-01 00:00:00"), as.POSIXct("2011-01-01 00:00:00"))
+
 
 # Remove unreasonable data
 T3_final$AirTC_25ft_Avg[which(T3_final$AirTC_25ft_Avg < -30)] <- NA #2010-11-04 12:00:00
-T3_final$AirTC_100ft_Avg[which(T3_final$AirTC_100ft_Avg < -30)] <- NA
 T3_final$AirTC_25ft_Avg[which(T3_final$AirTC_25ft_Avg > 40)] <- NA
+
+T3_final$AirTC_100ft_Avg[which(T3_final$AirTC_100ft_Avg < -30)] <- NA
 T3_final$AirTC_100ft_Avg[which(T3_final$AirTC_100ft_Avg > 40)] <- NA
+
+T3_final$AirTC_25ft_Min[which(T3_final$AirTC_25ft_Min < -30)] <- NA 
+T3_final$AirTC_25ft_Min[which(T3_final$AirTC_25ft_Min > 40)] <- NA 
+
+T3_final$AirTC_25ft_Max[which(T3_final$AirTC_25ft_Max < -30)] <- NA
+T3_final$AirTC_25ft_Max[which(T3_final$AirTC_25ft_Max > 40)] <- NA
+
+T3_final$AirTC_100ft_Min[which(T3_final$AirTC_100ft_Min < -30)] <- NA
+T3_final$AirTC_100ft_Min[which(T3_final$AirTC_100ft_Min > 40)] <- NA
+
+T3_final$AirTC_100ft_Max[which(T3_final$AirTC_100ft_Max > 40)] <- NA
+T3_final$AirTC_100ft_Max[which(T3_final$AirTC_100ft_Max < -30)] <- NA
+
+
 T3_final$WS_ms_25ft[which(T3_final$WS_ms_25ft < 0)] <- NA
 T3_final$WS_ms_100ft[which(T3_final$WS_ms_100ft < 0)] <- NA
 T3_final$WS_ms_25ft[which(T3_final$WS_ms_25ft > 25)] <- NA
@@ -438,14 +464,15 @@ T1_hourly_1 <- T1_final %>%
                          "WS_ms_25ft", "WS_ms_100ft", "srad_Wm2", "BP_mbar_Avg"), .funs = c("mean" = mean))
 T1_hourly_2 <- T1_final %>%
   group_by(DateTime) %>%
-  summarise_at(.vars = c("WS_ms_25ft", "WS_ms_100ft"), .funs = c("max" = max))
+  summarise_at(.vars = c("WS_ms_25ft_Max", "WS_ms_100ft_Max", "WS_ms_25ft", "WS_ms_100ft"), .funs = c("max" = max))
 
 T1_hourly <- merge(T1_hourly_1, T1_hourly_2)
 T1_hourly$DateTime <- ymd_hms(T1_hourly$DateTime)
 rm(T1_hourly_1, T1_hourly_2)
+
 setwd("/Volumes/My Passport/Sagehen/nmel-sagehen-met/Data")
 saveRDS(T1_hourly, "T1_hourly_lvl0.rds")
-saveRDS(T1_hourly, "T1_hourly_lvl0_2.0.rds")
+saveRDS(T1_hourly, "T1_hourly_lvl0_2.0.rds") # has both max calculated from _Max wind speeds and max calculated from regular wind speed 
 
 
 T1_daily_1 <- T1_final %>%
