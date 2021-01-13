@@ -486,6 +486,8 @@ T1_daily <- merge(T1_daily_1, T1_daily_2)
 rm(T1_daily_2, T1_daily_1)
 
 ## Tower 3:
+setwd("/Volumes/My Passport/Sagehen/nmel-sagehen-met/Data")
+T3_final <- readRDS("T3_lvl0.rds")
 names(T3_final)
 T3_hourly_1 <- T3_final %>%
   group_by(DateTime) %>%
@@ -494,16 +496,17 @@ T3_hourly_1 <- T3_final %>%
                          "BP_mbar_Avg"), .funs = c("mean" = mean))
 T3_hourly_2 <-  T3_final %>%
   group_by(DateTime) %>%
-  summarise_at(.vars = c("AirTC_25ft_Max", "AirTC_100ft_Max", "RH_25ft_Max", 
-                         "RH_100ft_Max", "WS_ms_25ft_Max", "WS_ms_100ft_Max"),
+  summarise_at(.vars = c("AirTC_25ft_Avg", "AirTC_100ft_Avg", "RH_25ft", 
+                         "RH_100ft", "WS_ms_25ft", "WS_ms_100ft"),
                .funs = c("max" = max))
 T3_hourly_3 <- T3_final %>% 
   group_by(DateTime) %>%
-  summarise_at(.vars = c("AirTC_25ft_Min", "AirTC_100ft_Min", "RH_25ft_Min",
-                         "RH_100ft_Min"), .funs = c("min" = min))
+  summarise_at(.vars = c("AirTC_25ft_Avg", "AirTC_100ft_Avg", "RH_25ft",
+                         "RH_100ft"), .funs = c("min" = min))
 T3_hourly <- merge(T3_hourly_1, T3_hourly_2)
 T3_hourly <- merge(T3_hourly, T3_hourly_3)
 rm(T3_hourly_1, T3_hourly_2, T3_hourly_3)
+
 names(T3_final)
 T3_daily_1 <- T3_final %>%
   group_by(Date) %>%
@@ -524,6 +527,8 @@ T3_daily <- merge(T3_daily, T3_daily_3)
 rm(T3_daily_1, T3_daily_2, T3_daily_3)
 
 ## Tower 4:
+setwd("/Volumes/My Passport/Sagehen/nmel-sagehen-met/Data")
+T4_final <- readRDS("T4_lvl0.rds")
 names(T4_final)
 T4_hourly_1 <- T4_final %>%
   group_by(DateTime) %>%
@@ -532,11 +537,11 @@ T4_hourly_1 <- T4_final %>%
                          "BP_mbar_Avg"), .funs = c("mean" = mean))
 T4_hourly_2 <- T4_final %>%
   group_by(DateTime) %>%
-  summarise_at(.vars = c("AirTC_25ft_Max", "RH_25ft_Max", "WS_ms_25ft_Max",
-                         "WS_ms_100ft_Max"), .funs = c("max" = max))
+  summarise_at(.vars = c("AirTC_25ft_Max", "RH_25ft", "WS_ms_25ft",
+                         "WS_ms_100ft"), .funs = c("max" = max))
 T4_hourly_3 <- T4_final %>%
   group_by(DateTime) %>%
-  summarise_at(.vars = c("AirTC_25ft_Min", "RH_25ft_Min"), .funs = c("min" = min))
+  summarise_at(.vars = c("AirTC_25ft_Min", "RH_25ft"), .funs = c("min" = min))
 T4_hourly <- merge(T4_hourly_1, T4_hourly_2)
 T4_hourly <- merge(T4_hourly, T4_hourly_3)
 rm(T4_hourly_1, T4_hourly_2, T4_hourly_3)

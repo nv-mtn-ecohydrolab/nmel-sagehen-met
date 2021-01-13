@@ -219,7 +219,7 @@ comp1 <- select(T3_hourly, c(1,10))
 comp2 <- select(R3, c(1,4))
 colnames(comp2)[1] <- c("DateTime")
 comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$AirTC_25ft_Max_max-comp$maxtemp_C_t3_25ft
+comp$diff <- comp$AirTC_25ft_Avg_max-comp$maxtemp_C_t3_25ft
 comp$diff <- abs(comp$diff)
 comp$diff <- round(comp$diff, digits = 8)
 
@@ -232,7 +232,7 @@ comp1 <- select(T3_hourly, c(1,11))
 comp2 <- select(R3, c(1,5))
 colnames(comp2)[1] <- c("DateTime")
 comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$AirTC_100ft_Max_max-comp$maxtemp_C_t3_100ft
+comp$diff <- comp$AirTC_100ft_Avg_max-comp$maxtemp_C_t3_100ft
 comp$diff <- abs(comp$diff)
 comp$diff <- round(comp$diff, digits = 8)
 
@@ -245,7 +245,7 @@ comp1 <- select(T3_hourly, c(1,16))
 comp2 <- select(R3, c(1,6))
 colnames(comp2)[1] <- c("DateTime")
 comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$AirTC_25ft_Min_min-comp$mintemp_C_t3_25ft
+comp$diff <- comp$AirTC_25ft_Avg_min-comp$mintemp_C_t3_25ft
 comp$diff <- abs(comp$diff)
 comp$diff <- round(comp$diff, digits = 8)
 
@@ -258,7 +258,7 @@ comp1 <- select(T3_hourly, c(1,17))
 comp2 <- select(R3, c(1,7))
 colnames(comp2)[1] <- c("DateTime")
 comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$AirTC_100ft_Min_min-comp$mintemp_C_t3_100ft
+comp$diff <- comp$AirTC_100ft_Avg_min-comp$mintemp_C_t3_100ft
 comp$diff <- abs(comp$diff)
 comp$diff <- round(comp$diff, digits = 8)
 
@@ -294,7 +294,7 @@ comp1 <- select(T3_hourly, c(1,12))
 comp2 <- select(R3, c(1,10))
 colnames(comp2)[1] <- c("DateTime")
 comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$RH_25ft_Max_max-comp$maxRH_t3_25
+comp$diff <- comp$RH_25ft_max-comp$maxRH_t3_25
 comp$diff <- abs(comp$diff)
 comp$diff <- round(comp$diff, digits = 8)
 
@@ -307,7 +307,7 @@ comp1 <- select(T3_hourly, c(1,13))
 comp2 <- select(R3, c(1,11))
 colnames(comp2)[1] <- c("DateTime")
 comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$RH_100ft_Max_max-comp$maxRH_t3_100
+comp$diff <- comp$RH_100ft_max-comp$maxRH_t3_100
 comp$diff <- abs(comp$diff)
 comp$diff <- round(comp$diff, digits = 8)
 
@@ -320,7 +320,7 @@ comp1 <- select(T3_hourly, c(1,18))
 comp2 <- select(R3, c(1,12))
 colnames(comp2)[1] <- c("DateTime")
 comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$RH_25ft_Min_min-comp$minRH_t3_25
+comp$diff <- comp$RH_25ft_min-comp$minRH_t3_25
 comp$diff <- abs(comp$diff)
 comp$diff <- round(comp$diff, digits = 8)
 
@@ -333,7 +333,7 @@ comp1 <- select(T3_hourly, c(1,19))
 comp2 <- select(R3, c(1,13))
 colnames(comp2)[1] <- c("DateTime")
 comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$RH_100ft_Min_min-comp$minRH_t3_100
+comp$diff <- comp$RH_100ft_min-comp$minRH_t3_100
 comp$diff <- abs(comp$diff)
 comp$diff <- round(comp$diff, digits = 8)
 
@@ -359,7 +359,7 @@ comp1 <- select(T3_hourly, c(1,14))
 comp2 <- select(R3, c(1,15))
 colnames(comp2)[1] <- c("DateTime")
 comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$WS_ms_25ft_Max_max-comp$maxws_ms_t3_25ft
+comp$diff <- comp$WS_ms_25ft_max-comp$maxws_ms_t3_25ft
 comp$diff <- abs(comp$diff)
 comp$diff <- round(comp$diff, digits = 8)
 
@@ -385,7 +385,7 @@ comp1 <- select(T3_hourly, c(1,15))
 comp2 <- select(R3, c(1,17))
 colnames(comp2)[1] <- c("DateTime")
 comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$WS_ms_100ft_Max_max-comp$maxws_ms_t3_100ft
+comp$diff <- comp$WS_ms_100ft_max-comp$maxws_ms_t3_100ft
 comp$diff <- abs(comp$diff)
 comp$diff <- round(comp$diff, digits = 8)
 
@@ -471,17 +471,17 @@ ggplot()+
   geom_point(data = comp, mapping = aes(x = DateTime, y = diff))
 # Same critique as other max and mins
 
-# Min Temp 25 ft
-comp1 <- select(T4_hourly, c(1,14))
-comp2 <- select(R4, c(1,5))
-colnames(comp2)[1] <- c("DateTime")
-comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$AirTC_25ft_Min_min-comp$mintemp_C_t4_100ft
-comp$diff <- abs(comp$diff)
-comp$diff <- round(comp$diff, digits = 8)
+# Min Temp 25 ft # THIS IS MESSED UP
+# comp1 <- select(T4_hourly, c(1,14))
+# comp2 <- select(R4, c(1,5))
+# colnames(comp2)[1] <- c("DateTime")
+# comp <- merge(comp1, comp2, all = TRUE)
+# comp$diff <- comp$AirTC_25ft_Min_min-comp$mintemp_C_t4_100ft
+# comp$diff <- abs(comp$diff)
+# comp$diff <- round(comp$diff, digits = 8)
 
-ggplot()+
-  geom_point(data = comp, mapping = aes(x = DateTime, y = diff))
+# ggplot()+
+#   geom_point(data = comp, mapping = aes(x = DateTime, y = diff))
 # Same critique as other max and mins
 
 # RH 25 ft
@@ -501,7 +501,7 @@ comp1 <- select(T4_hourly, c(1,11))
 comp2 <- select(R4, c(1,7))
 colnames(comp2)[1] <- c("DateTime")
 comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$RH_25ft_Max_max-comp$maxRH_t4_25
+comp$diff <- comp$RH_25ft_max-comp$maxRH_t4_25
 comp$diff <- abs(comp$diff)
 comp$diff <- round(comp$diff, digits = 8)
 
@@ -514,7 +514,7 @@ comp1 <- select(T4_hourly, c(1,15))
 comp2 <- select(R4, c(1,8))
 colnames(comp2)[1] <- c("DateTime")
 comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$RH_25ft_Min_min-comp$minRH_t4_25
+comp$diff <- comp$RH_25ft_min-comp$minRH_t4_25
 comp$diff <- abs(comp$diff)
 comp$diff <- round(comp$diff, digits = 8)
 
@@ -540,7 +540,7 @@ comp1 <- select(T4_hourly, c(1,12))
 comp2 <- select(R4, c(1,10))
 colnames(comp2)[1] <- c("DateTime")
 comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$WS_ms_25ft_Max_max-comp$maxws_ms_t4_25ft
+comp$diff <- comp$WS_ms_25ft_max-comp$maxws_ms_t4_25ft
 comp$diff <- abs(comp$diff)
 comp$diff <- round(comp$diff, digits = 8)
 
@@ -566,7 +566,7 @@ comp1 <- select(T4_hourly, c(1,13))
 comp2 <- select(R4, c(1,12))
 colnames(comp2)[1] <- c("DateTime")
 comp <- merge(comp1, comp2, all = TRUE)
-comp$diff <- comp$WS_ms_100ft_Max_max-comp$maxws_ms_t4_100ft
+comp$diff <- comp$WS_ms_100ft_max-comp$maxws_ms_t4_100ft
 comp$diff <- abs(comp$diff)
 comp$diff <- round(comp$diff, digits = 8)
 
